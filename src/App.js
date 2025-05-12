@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getRandomChoice, determineWinner, getResultMessage } from './utils/gameLogic';
 import { saveGameToLocalStorage, getGamesFromLocalStorage, clearGameHistory } from './utils/storage';
@@ -25,6 +25,9 @@ const App = () => {
   const [timeLeft, setTimeLeft] = useState(DEFAULT_GAME_TIME);
   const [gameEndTriggered, setGameEndTriggered] = useState(false); // New state to prevent duplicate game end
 
+  const handleTimeUp = useCallback(() => handleGameEnd(false), []);
+  const handleEndGame = useCallback(() => handleGameEnd(true), []);
+
   useEffect(() => {
     const savedHistory = getGamesFromLocalStorage();
     setGameHistory(savedHistory);
@@ -43,7 +46,7 @@ const App = () => {
     setGameEndTriggered(false); // Reset the trigger when starting new game
   };
 
-  const handleChoice = (choice) => {
+  const handleChoice = useCallback((choice) => {
     if (!gameStarted || gameEnded) return;
 
     const compChoice = getRandomChoice();
@@ -59,7 +62,7 @@ const App = () => {
     } else if (gameResult === 'computer') {
       setComputerScore(prev => prev + 1);
     }
-  };
+  }, [gameStarted, gameEnded]);
 
   const handleGameEnd = (endedEarly = false) => {
     if (gameEndTriggered) return; // Prevent duplicate calls
@@ -162,10 +165,9 @@ const App = () => {
 
           <Timer 
             initialTime={DEFAULT_GAME_TIME}
-            onTimeUp={() => handleGameEnd(false)} 
+            onTimeUp={handleTimeUp} 
             isRunning={gameStarted && !gameEnded}
-            onEndGame={() => handleGameEnd(true)}
-            key={gameStarted ? 'timer-running' : 'timer-stopped'} 
+            onEndGame={handleEndGame}
           />
 
           <AnimatePresence>

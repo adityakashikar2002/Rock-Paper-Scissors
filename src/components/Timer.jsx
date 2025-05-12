@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
-const Timer = ({ initialTime, onTimeUp, isRunning, onEndGame, key }) => {
+const Timer = ({ initialTime, onTimeUp, isRunning, onEndGame }) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
-  
+  const timerRef = useRef(null);
+  const prevIsRunningRef = useRef(isRunning);
+
   // Reset timer when initialTime changes
   useEffect(() => {
     setTimeLeft(initialTime);
@@ -16,21 +18,38 @@ const Timer = ({ initialTime, onTimeUp, isRunning, onEndGame, key }) => {
   };
 
   useEffect(() => {
-    if (!isRunning) return;
+    // Only update timer if isRunning actually changed
+    if (prevIsRunningRef.current === isRunning) return;
+    prevIsRunningRef.current = isRunning;
 
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          onTimeUp();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
+    // Clear any existing interval
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
 
-    return () => clearInterval(timer);
+    if (isRunning) {
+      timerRef.current = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timerRef.current);
+            onTimeUp();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
   }, [isRunning, onTimeUp]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
 
   const getTimerColor = () => {
     if (timeLeft <= 10) return 'text-red-500';
