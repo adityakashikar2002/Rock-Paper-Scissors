@@ -11,8 +11,9 @@ const GameHistory = ({ history }) => {
               <div className="flex justify-between items-start">
                 <div>
                   <p className="font-semibold">
-                    Game {index + 1}: <span className={
-                      game.result === 'Win' ? 'text-green-600' : 
+                    Game {history.length - index}: {/* Calculate game number based on array length */}
+                    <span className={
+                      game.result === 'Win' ? 'text-green-600' :
                       game.result === 'Lose' ? 'text-red-600' : 'text-yellow-600'
                     }>
                       {game.result}
@@ -22,8 +23,8 @@ const GameHistory = ({ history }) => {
                     Score: You {game.playerScore} - {game.computerScore} System
                   </p>
                   <p className="text-xs text-gray-500">
-                    {new Date(game.timestamp).toLocaleString()} • 
-                    {Math.floor(game.duration / 60)}m {game.duration % 60}s • 
+                    {new Date(game.timestamp).toLocaleString()} •
+                    {Math.floor(game.duration / 60)}m {game.duration % 60}s •
                     {game.rounds} rounds
                   </p>
                 </div>

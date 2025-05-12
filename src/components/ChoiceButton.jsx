@@ -14,31 +14,18 @@ const ChoiceButton = ({ choice, onClick, disabled }) => {
     }
   };
 
-  const getChoiceColor = () => {
-    switch (choice) {
-      case 'ROCK':
-        return 'bg-red-500 hover:bg-red-600';
-      case 'PAPER':
-        return 'bg-blue-500 hover:bg-blue-600';
-      case 'SCISSORS':
-        return 'bg-green-500 hover:bg-green-600';
-      default:
-        return 'bg-gray-500';
-    }
-  };
-
   return (
     <motion.button
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className={`${getChoiceColor()} text-white font-bold py-4 px-6 rounded-full shadow-lg transition-all duration-200 flex items-center justify-center h-24 w-24`}
+      className={`p-2 transition-all duration-200 flex items-center justify-center h-28 w-28`} // removed background, added padding
       onClick={() => onClick(choice)}
       disabled={disabled}
     >
-      <img 
-        src={getChoiceImage()} 
-        alt={choice} 
-        className="h-16 w-16 object-contain" 
+      <img
+        src={getChoiceImage()}
+        alt={choice}
+        className="h-24 w-24 object-contain" // increased image size
       />
     </motion.button>
   );

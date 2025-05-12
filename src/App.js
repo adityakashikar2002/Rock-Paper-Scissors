@@ -23,6 +23,7 @@ const App = () => {
   const [round, setRound] = useState(0);
   const [showRules, setShowRules] = useState(false);
   const [timeLeft, setTimeLeft] = useState(DEFAULT_GAME_TIME);
+  const [gameEndTriggered, setGameEndTriggered] = useState(false); // New state to prevent duplicate game end
 
   useEffect(() => {
     const savedHistory = getGamesFromLocalStorage();
@@ -39,6 +40,7 @@ const App = () => {
     setGameEnded(false);
     setRound(0);
     setTimeLeft(DEFAULT_GAME_TIME);
+    setGameEndTriggered(false); // Reset the trigger when starting new game
   };
 
   const handleChoice = (choice) => {
@@ -60,6 +62,10 @@ const App = () => {
   };
 
   const handleGameEnd = (endedEarly = false) => {
+    if (gameEndTriggered) return; // Prevent duplicate calls
+    
+    setGameEndTriggered(true); // Mark that game end has been triggered
+    
     const gameResult = playerScore > computerScore ? 'Win' : 
                       computerScore > playerScore ? 'Lose' : 'Draw';
     
@@ -89,6 +95,7 @@ const App = () => {
     setComputerScore(0);
     setRound(0);
     setTimeLeft(DEFAULT_GAME_TIME);
+    setGameEndTriggered(false); // Reset the trigger when playing again
   };
 
   const newGame = () => {
@@ -100,6 +107,8 @@ const App = () => {
     setGameStarted(false);
     setGameEnded(false);
     setRound(0);
+    setTimeLeft(DEFAULT_GAME_TIME); // Reset timer when starting new game
+    setGameEndTriggered(false); // Reset the trigger for new game
   };
 
   const clearHistory = () => {
@@ -156,6 +165,7 @@ const App = () => {
             onTimeUp={() => handleGameEnd(false)} 
             isRunning={gameStarted && !gameEnded}
             onEndGame={() => handleGameEnd(true)}
+            key={gameStarted ? 'timer-running' : 'timer-stopped'} 
           />
 
           <AnimatePresence>

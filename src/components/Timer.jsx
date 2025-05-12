@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react';
 
-const Timer = ({ initialTime, onTimeUp, isRunning, onEndGame }) => {
+const Timer = ({ initialTime, onTimeUp, isRunning, onEndGame, key }) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
   
+  // Reset timer when initialTime changes
+  useEffect(() => {
+    setTimeLeft(initialTime);
+  }, [initialTime]);
+
   // Format time as MM:SS
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);

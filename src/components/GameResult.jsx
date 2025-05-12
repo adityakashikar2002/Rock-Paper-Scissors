@@ -69,12 +69,6 @@ const GameResult = ({ playerScore, computerScore, onPlayAgain, onNewGame }) => {
 
       <div className="flex justify-center space-x-4">
         <button
-          onClick={onPlayAgain}
-          className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full text-lg shadow-lg transition-all duration-200"
-        >
-          Play Again
-        </button>
-        <button
           onClick={onNewGame}
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full text-lg shadow-lg transition-all duration-200"
         >
