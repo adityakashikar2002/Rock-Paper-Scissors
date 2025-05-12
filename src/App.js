@@ -28,6 +28,8 @@ const App = () => {
   const handleTimeUp = useCallback(() => handleGameEnd(false), []);
   const handleEndGame = useCallback(() => handleGameEnd(true), []);
 
+  const [timerResetKey, setTimerResetKey] = useState(0);
+
   useEffect(() => {
     const savedHistory = getGamesFromLocalStorage();
     setGameHistory(savedHistory);
@@ -42,8 +44,8 @@ const App = () => {
     setGameStarted(true);
     setGameEnded(false);
     setRound(0);
-    setTimeLeft(DEFAULT_GAME_TIME);
-    setGameEndTriggered(false); // Reset the trigger when starting new game
+    setTimerResetKey(prev => prev + 1); // This will force timer reset
+    setGameEndTriggered(false);
   };
 
   const handleChoice = useCallback((choice) => {
@@ -110,8 +112,8 @@ const App = () => {
     setGameStarted(false);
     setGameEnded(false);
     setRound(0);
-    setTimeLeft(DEFAULT_GAME_TIME); // Reset timer when starting new game
-    setGameEndTriggered(false); // Reset the trigger for new game
+    setTimerResetKey(prev => prev + 1); // This will force timer reset
+    setGameEndTriggered(false);
   };
 
   const clearHistory = () => {
@@ -165,9 +167,10 @@ const App = () => {
 
           <Timer 
             initialTime={DEFAULT_GAME_TIME}
-            onTimeUp={handleTimeUp} 
+            onTimeUp={() => handleGameEnd(false)} 
             isRunning={gameStarted && !gameEnded}
-            onEndGame={handleEndGame}
+            onEndGame={() => handleGameEnd(true)}
+            resetTrigger={timerResetKey}
           />
 
           <AnimatePresence>

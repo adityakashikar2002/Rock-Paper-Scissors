@@ -1,14 +1,19 @@
 import { useEffect, useState, useRef } from 'react';
 
-const Timer = ({ initialTime, onTimeUp, isRunning, onEndGame }) => {
+const Timer = ({ initialTime, onTimeUp, isRunning, onEndGame, resetTrigger }) => {
   const [timeLeft, setTimeLeft] = useState(initialTime);
   const timerRef = useRef(null);
   const prevIsRunningRef = useRef(isRunning);
 
-  // Reset timer when initialTime changes
+  // Reset timer when initialTime or resetTrigger changes
   useEffect(() => {
     setTimeLeft(initialTime);
-  }, [initialTime]);
+    // Clear existing interval if resetting
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  }, [initialTime, resetTrigger]);
 
   // Format time as MM:SS
   const formatTime = (seconds) => {
